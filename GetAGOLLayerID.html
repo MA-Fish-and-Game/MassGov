@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html> 
+<head>
+  <meta charset="UTF-8">
+  <meta name="description" content="Get Layer IDs from ESRI AGOL Map - This is useful when using the URL parameter in an AGOL map ie.,
+  https://geonet.esri.com/people/iwittenmyer-esristaff/blog/2015/07/09/updated-embed-map-url-parameters
+  http://doc.arcgis.com/en/arcgis-online/reference/use-url-parameters.htm
+  ">
+  <meta name="keywords" content="ESRI, AGOL, LAYER_IDs, Layer, ID">
+  <meta name="author" content="Kevin Robicheau">
+</head> 
+<body>
+
+<h2>Massachusetts Department of Fish and Game</h2>
+<h3>Find Layer IDs in AGOL maps</h3>
+Enter Map ID: <input type="text" id="myText" size="40" value="">
+
+<button onclick="CreateURL()">Show Layer IDs</button>
+
+<p id="demo"></p>
+<div id="Theid"></div>
+
+<script>
+var xmlhttp = new XMLHttpRequest();
+var vurl
+
+function CreateURL() {
+var vurl = document.getElementById("myText").value
+var url = "http://mass-eoeea.maps.arcgis.com/sharing/rest/content/items/"+vurl+"/data/?f=pjson";
+xmlhttp.onreadystatechange = function() {
+    if (this.readyState == 4 && this.status == 200) {
+        var myArr = JSON.parse(this.responseText);
+        ReportKeys(myArr);
+    }
+};
+xmlhttp.open("GET", url, true);
+xmlhttp.send();
+}
+
+function ReportKeys(arr) {
+    var out = "<h3><u>LAYER IDs in this map:</u></h3>";
+	var example = "<h3><u>Example URL:</u></h3>";
+    var i;
+	if(typeof arr.operationalLayers !== "undefined"){
+    for(i = 0; i < arr.operationalLayers.length; i++) {
+        out += arr.operationalLayers[i].id + '<br>';
+   }
+   out += "<br /><br /><a href='http://server.arcgis.com/en/portal/latest/use/app-url-parameters.htm#ESRI_SECTION1_ED1AF7A40ABD4F0F8F6456F51850A1E7'>Check out the Query a Feature section for instructions on using this Layer_ID as a parameter in you web app builder app URL</a>"
+   document.getElementById('Theid').innerHTML = out;
+   }
+   else 
+   {
+       document.getElementById('Theid').innerHTML = "No Layers Found at this MapID";
+   }
+
+
+}
+</script>
+
+</body>
+</html>
